@@ -1,0 +1,68 @@
+#include "pandoramodules_microboone.fcl"
+#include "reco_uboone_mcc9_8_driver_overlay_stage2.fcl"
+
+process_name: VisualiseSlice
+
+physics:
+{
+  analyzers: { 
+
+    visualiseSlice :
+    {
+      module_type: VisualiseSlice
+
+      GeneratorModuleLabel:       "generator"
+      MCParticleModuleLabel:      "largeant"
+      HitModuleLabel:             "gaushit"
+      BacktrackModuleLabel:       "gaushitTruthMatch"
+      FlashMatchModuleLabel:      "pandora"
+
+      TrackModuleLabel:           "pandora"
+      ShowerModuleLabel:          "pandora"
+      CalorimetryModuleLabel:     "pandoracali"
+      PIDModuleLabel:             "pandorapid"
+      CalorimetryModuleLabelSCE:  "pandoracali"
+      PIDModuleLabelSCE:          "pandorapid"
+
+      Debug:                      true
+      ApplySCECorrections:        true
+    }
+  }
+
+  #stream1:  [ out1 ]
+
+  # Change root file
+  #trigger_paths: [ prod ] 
+
+  path0 : [ visualiseSlice ]
+
+  # Do not change root file
+  end_paths: [ path0 ] 
+}
+
+outputs:
+{
+  out1:
+  {
+    module_type:      RootOutput
+    fileName:         "outfile_%#.root"
+    dataTier:         "full-reconstructed"
+    fileProperties:
+    {
+      maxInputFiles:  1
+      granularity:    "InputFile"
+    }
+  }
+}
+
+#services.DetectorClocksService.InheritClockConfig:       false
+#services.DetectorClocksService.TriggerOffsetTPC:         -0.400e3
+services.DetectorPropertiesService.NumberTimeSamples: 6400
+services.DetectorPropertiesService.ReadOutWindowSize: 6400
+
+services.SpaceCharge.EnableCalSpatialSCE: true #enable bkwd (reco -> true)
+services.SpaceCharge.EnableCalEfieldSCE: true
+services.SpaceCharge.EnableSimSpatialSCE: true # disable fwd (true -> reco)
+services.SpaceCharge.EnableSimEfieldSCE: true
+#services.SpaceCharge.RepresentationType: "Voxelized_TH3"
+#services.SpaceCharge.CalibrationInputFilename: "SpaceCharge/SCEoffsets_dataDriven_combined_bkwd_Jan18.root"
