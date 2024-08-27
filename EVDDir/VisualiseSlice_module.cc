@@ -118,24 +118,15 @@ public:
   void FillPFPHitInfo(art::Event const& evt, const art::Ptr<recob::PFParticle> &pfp);
   void FillPFPNuVertexInfo(art::Event const& evt, const art::Ptr<recob::PFParticle> &pfp);
   void FillPFPMiscInfo(art::Event const& evt, const art::Ptr<recob::PFParticle> &pfp);
-  void FillPFPShowerInfo(art::Event const& evt, const art::Ptr<recob::PFParticle> &pfp);
-  void FillPFPEnergyInfo(art::Event const& evt, const art::Ptr<recob::PFParticle> &pfp);
-  double GetMedianValue(const std::vector<float> &inputVector);
-  void FillPIDInfo(art::Event const& evt, const art::Ptr<recob::PFParticle> &pfp);
 private:
-
-    bool m_applySCECorrections;
 
     // Product labels
     std::string m_GeneratorModuleLabel;    
     std::string m_MCParticleModuleLabel;
     std::string m_HitModuleLabel;
     std::string m_FlashMatchModuleLabel;
+    std::string m_PandoraModuleLabel;
     std::string m_BacktrackModuleLabel;
-    std::string m_TrackModuleLabel;
-    std::string m_ShowerModuleLabel;
-    std::string m_CalorimetryModuleLabel;
-    std::string m_PIDModuleLabel;
 
     //////////////////////////////
     // BDT trees
@@ -149,8 +140,8 @@ private:
     int m_run;
     int m_subrun;
     // True event vars
-    double m_sliceCompleteness;
-    double m_slicePurity;
+    std::vector<double> m_sliceCompleteness_out;
+    std::vector<double> m_slicePurity_out;
     double m_trueNuVertexX;
     double m_trueNuVertexY;
     double m_trueNuVertexZ;
@@ -158,75 +149,61 @@ private:
     double m_vTrueNuVertex_wire;
     double m_wTrueNuVertex_wire;
     // Event hit info
-    std::vector<double> m_allUHits_wire;
-    std::vector<double> m_allUHits_drift;
-    std::vector<int> m_allUHits_owner;
-    std::vector<bool> m_allUHits_isInSlice;
-    std::vector<double> m_allVHits_wire;
-    std::vector<double> m_allVHits_drift;
-    std::vector<int> m_allVHits_owner;
-    std::vector<bool> m_allVHits_isInSlice;
-    std::vector<double> m_allWHits_wire;
-    std::vector<double> m_allWHits_drift;
-    std::vector<int> m_allWHits_owner;
-    std::vector<bool> m_allWHits_isInSlice;
+    std::vector<std::vector<double>> m_allUHits_wire_out;
+    std::vector<std::vector<double>> m_allUHits_drift_out;
+    std::vector<std::vector<int>> m_allUHits_owner_out;
+    std::vector<std::vector<double>> m_allVHits_wire_out;
+    std::vector<std::vector<double>> m_allVHits_drift_out;
+    std::vector<std::vector<int>> m_allVHits_owner_out;
+    std::vector<std::vector<double>> m_allWHits_wire_out;
+    std::vector<std::vector<double>> m_allWHits_drift_out;
+    std::vector<std::vector<int>> m_allWHits_owner_out;
     // Reco event vars
     int m_trueNuSliceID;
+    int m_pandoraNuSliceID;
     int m_flashMatchNuSliceID;
-    double m_recoNuVertexX;
-    double m_recoNuVertexY;
-    double m_recoNuVertexZ;
-    double m_uRecoNuVertex_wire;
-    double m_vRecoNuVertex_wire;
-    double m_wRecoNuVertex_wire;    
+    std::vector<int> m_sliceIDs;
+    std::vector<double> m_recoNuVertexX_out;
+    std::vector<double> m_recoNuVertexY_out;
+    std::vector<double> m_recoNuVertexZ_out;
+    std::vector<double> m_topologicalScore_out;
+    std::vector<double> m_uRecoNuVertex_wire_out;
+    std::vector<double> m_vRecoNuVertex_wire_out;
+    std::vector<double> m_wRecoNuVertex_wire_out;    
     // TODO: Topological score?
     // True PFP vars
-    std::vector<int> m_truePDG_out;
-    std::vector<double> m_completeness_out;
-    std::vector<double> m_purity_out;
+    std::vector<std::vector<int>> m_truePDG_out;
+    std::vector<std::vector<double>> m_completeness_out;
+    std::vector<std::vector<double>> m_purity_out;
     // Reco PFP vars
-    std::vector<double> m_recoVertexX_out;
-    std::vector<double> m_recoVertexY_out;
-    std::vector<double> m_recoVertexZ_out;
-    std::vector<double> m_uRecoVertex_wire_out;
-    std::vector<double> m_uRecoVertex_drift_out;
-    std::vector<double> m_vRecoVertex_wire_out;
-    std::vector<double> m_vRecoVertex_drift_out;
-    std::vector<double> m_wRecoVertex_wire_out;
-    std::vector<double> m_wRecoVertex_drift_out;
-    std::vector<std::vector<double>> m_uHits_wire_out;
-    std::vector<std::vector<double>> m_uHits_drift_out;
-    std::vector<std::vector<double>> m_vHits_wire_out;
-    std::vector<std::vector<double>> m_vHits_drift_out;
-    std::vector<std::vector<double>> m_wHits_wire_out;
-    std::vector<std::vector<double>> m_wHits_drift_out;
-    std::vector<int> m_nSpacePoints_out;
-    std::vector<std::vector<double>> m_spacePointsX_out;
-    std::vector<std::vector<double>> m_spacePointsY_out;
-    std::vector<std::vector<double>> m_spacePointsZ_out;
-    std::vector<int> m_generation_out;
-    std::vector<int> m_pandoraPFPCode_out;
-    std::vector<double> m_trackShowerScore_out;
-    std::vector<double> m_nuVertexSeparation_out;
-    std::vector<double> m_dca_out;
-    std::vector<double> m_nuVertexChargeDistribution_out;
-    std::vector<double> m_trackParentSeparation_out;
-    std::vector<double> m_showerOpeningAngle_out;
-    std::vector<double> m_showerLength_out;
-    std::vector<int> m_nHits2D_out;
-    std::vector<int> m_nHits3D_out;
-    std::vector<int> m_nHitsU_out;
-    std::vector<int> m_nHitsV_out;
-    std::vector<int> m_nHitsW_out;
-    std::vector<double> m_totalEnergy_out;
-    std::vector<double> m_initialdEdx_out;
-    std::vector<double> m_chiPIDProton_out;
-    std::vector<double> m_chiPIDMuon_out;
-    std::vector<double> m_chiPIDPion_out;
-    std::vector<double> m_braggPIDProton_out;
-    std::vector<double> m_braggPIDMuon_out;
-    std::vector<double> m_braggPIDPion_out;
-    std::vector<double> m_LLRPIDReduced_out;
+    std::vector<std::vector<double>> m_recoVertexX_out;
+    std::vector<std::vector<double>> m_recoVertexY_out;
+    std::vector<std::vector<double>> m_recoVertexZ_out;
+    std::vector<std::vector<double>> m_uRecoVertex_wire_out;
+    std::vector<std::vector<double>> m_uRecoVertex_drift_out;
+    std::vector<std::vector<double>> m_vRecoVertex_wire_out;
+    std::vector<std::vector<double>> m_vRecoVertex_drift_out;
+    std::vector<std::vector<double>> m_wRecoVertex_wire_out;
+    std::vector<std::vector<double>> m_wRecoVertex_drift_out;
+    std::vector<std::vector<std::vector<double>>> m_uHits_wire_out;
+    std::vector<std::vector<std::vector<double>>> m_uHits_drift_out;
+    std::vector<std::vector<std::vector<double>>> m_vHits_wire_out;
+    std::vector<std::vector<std::vector<double>>> m_vHits_drift_out;
+    std::vector<std::vector<std::vector<double>>> m_wHits_wire_out;
+    std::vector<std::vector<std::vector<double>>> m_wHits_drift_out;
+    std::vector<std::vector<int>> m_nSpacePoints_out;
+    std::vector<std::vector<std::vector<double>>> m_spacePointsX_out;
+    std::vector<std::vector<std::vector<double>>> m_spacePointsY_out;
+    std::vector<std::vector<std::vector<double>>> m_spacePointsZ_out;
+    std::vector<std::vector<int>> m_generation_out;
+    std::vector<std::vector<int>> m_pandoraPFPCode_out;
+    std::vector<std::vector<double>> m_trackShowerScore_out;
+    std::vector<std::vector<double>> m_nuVertexSeparation_out;
+    std::vector<std::vector<int>> m_nHits2D_out;
+    std::vector<std::vector<int>> m_nHits3D_out;
+    std::vector<std::vector<int>> m_nHitsU_out;
+    std::vector<std::vector<int>> m_nHitsV_out;
+    std::vector<std::vector<int>> m_nHitsW_out;
 
     //////////////////////////////
     // Analyzer Variables - THIS IS NOT SUPER CLEAN :'(
@@ -259,28 +236,11 @@ private:
     int m_pandoraPFPCode;
     double m_trackShowerScore;
     double m_nuVertexSeparation;
-    double m_dca;
-    double m_nuVertexChargeDistribution;
-    double m_trackParentSeparation;
-    double m_showerOpeningAngle;
-    double m_showerLength;
     int m_nHits2D;
     int m_nHits3D;
     int m_nHitsU;
     int m_nHitsV;
     int m_nHitsW;
-    double m_totalEnergy;
-    double m_initialdEdx;
-    double m_chiPIDProton;
-    double m_chiPIDMuon;
-    double m_chiPIDPion;
-    double m_braggPIDProton;
-    double m_braggPIDMuon;
-    double m_braggPIDPion;
-    double m_LLRPIDReduced;
-
-    // FlashMatchNuSlice key
-    int m_flashMatchNuSliceKey;
 
     // Linking hits and true owners
     std::map<int, int> m_hitToTrackID;
@@ -292,42 +252,22 @@ private:
     // Linking Self() -> PFParticle
     lar_pandora::PFParticleMap m_pfpMap;
 
-    // LLR_PID
-    searchingfornues::LLRPID m_LLRPIDCalculator;
-    searchingfornues::ProtonMuonLookUpParameters m_ProtonMuonParams;
-
     // Get print statements?
     bool m_debug;
 };
 
 pandora::VisualiseSlice::VisualiseSlice(fhicl::ParameterSet const& pset)
   : EDAnalyzer{pset},
-    m_applySCECorrections(pset.get<bool>("ApplySCECorrections")),
     m_GeneratorModuleLabel(pset.get<std::string>("GeneratorModuleLabel")),    
     m_MCParticleModuleLabel(pset.get<std::string>("MCParticleModuleLabel")),
     m_HitModuleLabel(pset.get<std::string>("HitModuleLabel")),
     m_FlashMatchModuleLabel(pset.get<std::string>("FlashMatchModuleLabel")),
+    m_PandoraModuleLabel(pset.get<std::string>("PandoraModuleLabel")),
     m_BacktrackModuleLabel(pset.get<std::string>("BacktrackModuleLabel")),
-    m_TrackModuleLabel(pset.get<std::string>("TrackModuleLabel")),
-    m_ShowerModuleLabel(pset.get<std::string>("ShowerModuleLabel")),
-    m_CalorimetryModuleLabel(pset.get<std::string>(m_applySCECorrections ? "CalorimetryModuleLabelSCE" : "CalorimetryModuleLabel")),
-    m_PIDModuleLabel(pset.get<std::string>(m_applySCECorrections ? "PIDModuleLabelSCE" : "PIDModuleLabel")),
     m_debug(pset.get<bool>("Debug"))
 {
     Reset();
     InitialiseTrees();
-
-    m_LLRPIDCalculator.set_dedx_binning(0, m_ProtonMuonParams.dedx_edges_pl_0);
-    m_LLRPIDCalculator.set_par_binning(0, m_ProtonMuonParams.parameters_edges_pl_0);
-    m_LLRPIDCalculator.set_lookup_tables(0, m_ProtonMuonParams.dedx_pdf_pl_0);
-
-    m_LLRPIDCalculator.set_dedx_binning(1, m_ProtonMuonParams.dedx_edges_pl_1);
-    m_LLRPIDCalculator.set_par_binning(1, m_ProtonMuonParams.parameters_edges_pl_1);
-    m_LLRPIDCalculator.set_lookup_tables(1, m_ProtonMuonParams.dedx_pdf_pl_1);
-
-    m_LLRPIDCalculator.set_dedx_binning(2, m_ProtonMuonParams.dedx_edges_pl_2);
-    m_LLRPIDCalculator.set_par_binning(2, m_ProtonMuonParams.parameters_edges_pl_2);
-    m_LLRPIDCalculator.set_lookup_tables(2, m_ProtonMuonParams.dedx_pdf_pl_2);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -342,8 +282,8 @@ void pandora::VisualiseSlice::Reset()
     m_run = DEFAULT_INT;
     m_subrun = DEFAULT_INT;
     // True event vars
-    m_sliceCompleteness = DEFAULT_DOUBLE;
-    m_slicePurity = DEFAULT_DOUBLE;
+    m_sliceCompleteness_out.clear();
+    m_slicePurity_out.clear();
     m_trueNuVertexX = DEFAULT_DOUBLE;
     m_trueNuVertexY = DEFAULT_DOUBLE;
     m_trueNuVertexZ = DEFAULT_DOUBLE;
@@ -351,27 +291,27 @@ void pandora::VisualiseSlice::Reset()
     m_vTrueNuVertex_wire = DEFAULT_DOUBLE;
     m_wTrueNuVertex_wire = DEFAULT_DOUBLE;
     // Event hit info
-    m_allUHits_wire.clear();
-    m_allUHits_drift.clear();
-    m_allUHits_owner.clear();
-    m_allUHits_isInSlice.clear();
-    m_allVHits_wire.clear();
-    m_allVHits_drift.clear();
-    m_allVHits_owner.clear();
-    m_allVHits_isInSlice.clear();
-    m_allWHits_wire.clear();
-    m_allWHits_drift.clear();
-    m_allWHits_owner.clear();
-    m_allWHits_isInSlice.clear();
+    m_allUHits_wire_out.clear();
+    m_allUHits_drift_out.clear();
+    m_allUHits_owner_out.clear();
+    m_allVHits_wire_out.clear();
+    m_allVHits_drift_out.clear();
+    m_allVHits_owner_out.clear();
+    m_allWHits_wire_out.clear();
+    m_allWHits_drift_out.clear();
+    m_allWHits_owner_out.clear();
     // Reco event vars
     m_trueNuSliceID = DEFAULT_INT;
+    m_pandoraNuSliceID = DEFAULT_INT;
     m_flashMatchNuSliceID = DEFAULT_INT;
-    m_recoNuVertexX = DEFAULT_DOUBLE;
-    m_recoNuVertexY = DEFAULT_DOUBLE;
-    m_recoNuVertexZ = DEFAULT_DOUBLE;
-    m_uRecoNuVertex_wire = DEFAULT_DOUBLE;
-    m_vRecoNuVertex_wire = DEFAULT_DOUBLE;
-    m_wRecoNuVertex_wire = DEFAULT_DOUBLE;
+    m_sliceIDs.clear();
+    m_recoNuVertexX_out.clear();
+    m_recoNuVertexY_out.clear();
+    m_recoNuVertexZ_out.clear();
+    m_topologicalScore_out.clear();
+    m_uRecoNuVertex_wire_out.clear();
+    m_vRecoNuVertex_wire_out.clear();
+    m_wRecoNuVertex_wire_out.clear();
     // TODO: Topological score?
     // True PFP vars
     m_truePDG_out.clear();
@@ -401,33 +341,17 @@ void pandora::VisualiseSlice::Reset()
     m_pandoraPFPCode_out.clear();
     m_trackShowerScore_out.clear();
     m_nuVertexSeparation_out.clear();
-    m_dca_out.clear();
-    m_nuVertexChargeDistribution_out.clear();
-    m_trackParentSeparation_out.clear();
-    m_showerOpeningAngle_out.clear();
-    m_showerLength_out.clear();
     m_nHits2D_out.clear();
     m_nHits3D_out.clear();
     m_nHitsU_out.clear();
     m_nHitsV_out.clear();
     m_nHitsW_out.clear();
-    m_totalEnergy_out.clear();
-    m_initialdEdx_out.clear();
-    m_chiPIDProton_out.clear();
-    m_chiPIDMuon_out.clear();
-    m_chiPIDPion_out.clear();
-    m_braggPIDProton_out.clear();
-    m_braggPIDMuon_out.clear();
-    m_braggPIDPion_out.clear();
-    m_LLRPIDReduced_out.clear();
 
     //////////////////////////////
     // Analyzer Variables - THIS IS NOT SUPER CLEAN :'(
     //////////////////////////////
     ResetPfo();
 
-    // FlashMatchNuSlice key
-    m_flashMatchNuSliceKey = DEFAULT_INT;
     m_hitToTrackID.clear();
     m_trackIDToHits.clear();
     m_mcParticleMap.clear();
@@ -470,21 +394,6 @@ void pandora::VisualiseSlice::ResetPfo()
     m_nHitsV = DEFAULT_INT;
     m_nHitsW = DEFAULT_INT;
     m_nuVertexSeparation = DEFAULT_DOUBLE;
-    m_dca = DEFAULT_DOUBLE;
-    m_nuVertexChargeDistribution = DEFAULT_DOUBLE;
-    m_totalEnergy = DEFAULT_DOUBLE;
-    m_initialdEdx = DEFAULT_DOUBLE;
-    m_trackShowerScore = DEFAULT_DOUBLE;
-    m_showerOpeningAngle = DEFAULT_DOUBLE;
-    m_showerLength = DEFAULT_DOUBLE;
-    m_trackParentSeparation = DEFAULT_DOUBLE;
-    m_chiPIDProton = DEFAULT_DOUBLE;
-    m_chiPIDMuon = DEFAULT_DOUBLE;
-    m_chiPIDPion = DEFAULT_DOUBLE;
-    m_braggPIDProton = DEFAULT_DOUBLE;
-    m_braggPIDMuon = DEFAULT_DOUBLE;
-    m_braggPIDPion = DEFAULT_DOUBLE;
-    m_LLRPIDReduced = DEFAULT_DOUBLE;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -503,8 +412,8 @@ void pandora::VisualiseSlice::InitialiseTrees()
     m_tree->Branch("Run", &m_run);
     m_tree->Branch("Subrun", &m_subrun);
     // True event vars
-    m_tree->Branch("SliceCompleteness", &m_sliceCompleteness);
-    m_tree->Branch("SlicePurity", &m_slicePurity);
+    m_tree->Branch("SliceCompleteness", &m_sliceCompleteness_out);
+    m_tree->Branch("SlicePurity", &m_slicePurity_out);
     m_tree->Branch("TrueNuVertexX", &m_trueNuVertexX);
     m_tree->Branch("TrueNuVertexY", &m_trueNuVertexY);
     m_tree->Branch("TrueNuVertexZ", &m_trueNuVertexZ);    
@@ -512,27 +421,27 @@ void pandora::VisualiseSlice::InitialiseTrees()
     m_tree->Branch("VTrueNuVertex_wire", &m_vTrueNuVertex_wire);
     m_tree->Branch("WTrueNuVertex_wire", &m_wTrueNuVertex_wire);    
     // Event hit info
-    m_tree->Branch("AllUHits_wire", &m_allUHits_wire);
-    m_tree->Branch("AllUHits_drift", &m_allUHits_drift);
-    m_tree->Branch("AllUHits_owner", &m_allUHits_owner);
-    m_tree->Branch("AllUHits_isInSlice", &m_allUHits_isInSlice);
-    m_tree->Branch("AllVHits_wire", &m_allVHits_wire);
-    m_tree->Branch("AllVHits_drift", &m_allVHits_drift);
-    m_tree->Branch("AllVHits_owner", &m_allVHits_owner);
-    m_tree->Branch("AllVHits_isInSlice", &m_allVHits_isInSlice);
-    m_tree->Branch("AllWHits_wire", &m_allWHits_wire);
-    m_tree->Branch("AllWHits_drift", &m_allWHits_drift);
-    m_tree->Branch("AllWHits_owner", &m_allWHits_owner);
-    m_tree->Branch("AllWHits_isInSlice", &m_allWHits_isInSlice);
+    m_tree->Branch("AllUHits_wire", &m_allUHits_wire_out);
+    m_tree->Branch("AllUHits_drift", &m_allUHits_drift_out);
+    m_tree->Branch("AllUHits_owner", &m_allUHits_owner_out);
+    m_tree->Branch("AllVHits_wire", &m_allVHits_wire_out);
+    m_tree->Branch("AllVHits_drift", &m_allVHits_drift_out);
+    m_tree->Branch("AllVHits_owner", &m_allVHits_owner_out);
+    m_tree->Branch("AllWHits_wire", &m_allWHits_wire_out);
+    m_tree->Branch("AllWHits_drift", &m_allWHits_drift_out);
+    m_tree->Branch("AllWHits_owner", &m_allWHits_owner_out);
     // Reco event vars
     m_tree->Branch("TrueNuSliceID", &m_trueNuSliceID);
+    m_tree->Branch("PandoraNuSliceID", &m_pandoraNuSliceID);
     m_tree->Branch("FlashMatchNuSliceID", &m_flashMatchNuSliceID);
-    m_tree->Branch("RecoNuVertexX", &m_recoNuVertexX);
-    m_tree->Branch("RecoNuVertexY", &m_recoNuVertexY);
-    m_tree->Branch("RecoNuVertexZ", &m_recoNuVertexZ);
-    m_tree->Branch("URecoNuVertex_wire", &m_uRecoNuVertex_wire);
-    m_tree->Branch("VRecoNuVertex_wire", &m_vRecoNuVertex_wire);
-    m_tree->Branch("WRecoNuVertex_wire", &m_wRecoNuVertex_wire);        
+    m_tree->Branch("SliceIDs", &m_sliceIDs);
+    m_tree->Branch("RecoNuVertexX", &m_recoNuVertexX_out);
+    m_tree->Branch("RecoNuVertexY", &m_recoNuVertexY_out);
+    m_tree->Branch("RecoNuVertexZ", &m_recoNuVertexZ_out);
+    m_tree->Branch("TopologicalScore", &m_topologicalScore_out);
+    m_tree->Branch("URecoNuVertex_wire", &m_uRecoNuVertex_wire_out);
+    m_tree->Branch("VRecoNuVertex_wire", &m_vRecoNuVertex_wire_out);
+    m_tree->Branch("WRecoNuVertex_wire", &m_wRecoNuVertex_wire_out);        
     // TODO: Topological score?
     // True PFP vars
     m_tree->Branch("TruePDG", &m_truePDG_out);
@@ -566,21 +475,6 @@ void pandora::VisualiseSlice::InitialiseTrees()
     m_tree->Branch("NHitsV", &m_nHitsV_out);
     m_tree->Branch("NHitsW", &m_nHitsW_out);
     m_tree->Branch("NuVertexSeparation", &m_nuVertexSeparation_out);
-    m_tree->Branch("DCA", &m_dca_out);
-    m_tree->Branch("NuVertexChargeDistribution", &m_nuVertexChargeDistribution_out);
-    m_tree->Branch("TotalEnergy", &m_totalEnergy_out);
-    m_tree->Branch("InitialdEdx", &m_initialdEdx_out);
-    m_tree->Branch("TrackShowerScore", &m_trackShowerScore_out);
-    m_tree->Branch("ShowerOpeningAngle", &m_showerOpeningAngle_out);
-    m_tree->Branch("ShowerLength", &m_showerLength_out);
-    m_tree->Branch("TrackParentSeparation", &m_trackParentSeparation_out);
-    m_tree->Branch("ChiPIDProton", &m_chiPIDProton_out);
-    m_tree->Branch("ChiPIDMuon", &m_chiPIDMuon_out);
-    m_tree->Branch("ChiPIDPion", &m_chiPIDPion_out);
-    m_tree->Branch("BraggPIDProton", &m_braggPIDProton_out);
-    m_tree->Branch("BraggPIDMuon", &m_braggPIDMuon_out);
-    m_tree->Branch("BraggPIDPion", &m_braggPIDPion_out);
-    m_tree->Branch("LLRPIDReduced", &m_LLRPIDReduced_out);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -599,16 +493,13 @@ void pandora::VisualiseSlice::analyze(art::Event const& evt)
     FillMCParticleMaps(evt);
     if (m_debug) std::cout << "Filling MC Slice Info..." << std::endl;
     FillMCSliceInfo(evt);
+    if (m_debug) std::cout << "Filling Event Info..." << std::endl;
+    FillEventInformation(evt);
+    if (m_debug) std::cout << "Filling PFParticle Information..." << std::endl;
+    FillPFPInformation(evt);
 
-    // i.e. we have found a slice...
-    if (m_flashMatchNuSliceID >= 0)
-    {
-        if (m_debug) std::cout << "Filling Event Info..." << std::endl;
-        FillEventInformation(evt);
-        if (m_debug) std::cout << "Filling PFParticle Information..." << std::endl;
-        FillPFPInformation(evt);
-    }
 
+    if (m_debug) std::cout << "Fill Tree..." << std::endl;
     m_tree->Fill();
 }
 
@@ -631,7 +522,7 @@ void pandora::VisualiseSlice::FillPandoraMaps(art::Event const& evt)
     art::Handle<std::vector<recob::PFParticle>> pfpHandle;
     std::vector<art::Ptr<recob::PFParticle>> pfpVector;
 
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, pfpHandle))
+    if (!evt.getByLabel(m_PandoraModuleLabel, pfpHandle))
         throw cet::exception("VisualiseSlice") << "No PFParticle Data Products Found!" << std::endl;
 
     art::fill_ptr_vector(pfpVector, pfpHandle);
@@ -715,14 +606,14 @@ int pandora::VisualiseSlice::GetLeadEMTrackID(const art::Ptr<simb::MCParticle> &
 void pandora::VisualiseSlice::FillMCSliceInfo(art::Event const& evt)
 {
     // Get slice information
-    art::Handle<std::vector<recob::Slice>> sliceHandle;
-    std::vector<art::Ptr<recob::Slice>> sliceVector;
+    art::Handle<std::vector<recob::Slice>> sliceHandle_pandora;
+    std::vector<art::Ptr<recob::Slice>> sliceVector_pandora;
 
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, sliceHandle))
-        throw cet::exception("PhotonBDTModuleLabel") << "No Slice Data Products Found!" << std::endl;
+    if (!evt.getByLabel(m_PandoraModuleLabel, sliceHandle_pandora))
+        throw cet::exception("VisualiseSlice::FillMCSliceInfo") << "No Slice Data Products Found!" << std::endl;
 
-    art::FindManyP<recob::Hit> hitAssoc = art::FindManyP<recob::Hit>(sliceHandle, evt, m_FlashMatchModuleLabel);
-    art::fill_ptr_vector(sliceVector, sliceHandle);
+    art::FindManyP<recob::Hit> hitAssoc_pandora = art::FindManyP<recob::Hit>(sliceHandle_pandora, evt, m_PandoraModuleLabel);
+    art::fill_ptr_vector(sliceVector_pandora, sliceHandle_pandora);
 
     /////////////////////////////////////////////
     // Find the true nu slice ID 
@@ -731,11 +622,11 @@ void pandora::VisualiseSlice::FillMCSliceInfo(art::Event const& evt)
     std::map<int, int> sliceSignalHitMap;
     int totalTrueHits(0);
 
-    for (art::Ptr<recob::Slice> &slice : sliceVector)
+    for (art::Ptr<recob::Slice> &slice : sliceVector_pandora)
     {
         sliceSignalHitMap[slice->ID()] = 0;
 
-        const std::vector<art::Ptr<recob::Hit>> &sliceHits(hitAssoc.at(slice.key()));
+        const std::vector<art::Ptr<recob::Hit>> &sliceHits(hitAssoc_pandora.at(slice.key()));
 
         for (const art::Ptr<recob::Hit> &sliceHit : sliceHits)
         {
@@ -754,44 +645,110 @@ void pandora::VisualiseSlice::FillMCSliceInfo(art::Event const& evt)
     }
 
     /////////////////////////////////////////////
+    // Find the pandora nu slice ID 
+    /////////////////////////////////////////////
+    art::Handle<std::vector<recob::PFParticle>> pfpHandle_pandora;
+
+    if (!evt.getByLabel(m_PandoraModuleLabel, pfpHandle_pandora))
+        throw cet::exception("PhotonBDTModuleLabel") << "No Slice Data Products Found!" << std::endl;
+
+    art::FindManyP<recob::PFParticle> pfpAssoc_pandora = art::FindManyP<recob::PFParticle>(sliceHandle_pandora, evt, m_PandoraModuleLabel);
+    art::FindManyP<larpandoraobj::PFParticleMetadata> metadataAssn_pandora = art::FindManyP<larpandoraobj::PFParticleMetadata>(pfpHandle_pandora, evt, m_PandoraModuleLabel);
+
+    double bestTopologicalScore(-std::numeric_limits<double>::max());
+
+    for (const art::Ptr<recob::Slice> &slice : sliceVector_pandora)
+    {
+        const std::vector<art::Ptr<recob::PFParticle>> slicePFPs = pfpAssoc_pandora.at(slice.key());
+
+        for (const art::Ptr<recob::PFParticle> &pfp : slicePFPs)
+        {
+            // only topological score for the primary pfp
+            if (!pfp->IsPrimary())
+                continue;
+
+            std::vector<art::Ptr<larpandoraobj::PFParticleMetadata>> pfpMeta = metadataAssn_pandora.at(pfp.key());
+
+            if (pfpMeta.empty())
+                continue;
+
+            const larpandoraobj::PFParticleMetadata::PropertiesMap &pfParticlePropertiesMap(pfpMeta.at(0)->GetPropertiesMap());
+
+            if (!pfParticlePropertiesMap.empty() && (pfParticlePropertiesMap.find("NuScore") != pfParticlePropertiesMap.end()))
+            {
+                const double thisTopologicalScore = pfParticlePropertiesMap.at("NuScore");
+
+                if (thisTopologicalScore > bestTopologicalScore)
+                {
+                    bestTopologicalScore = thisTopologicalScore;
+                    m_pandoraNuSliceID = slice->ID();
+                }
+            }
+        }
+    }
+
+    /////////////////////////////////////////////
     // Find the flash match nu slice ID 
     /////////////////////////////////////////////
-    art::Handle<std::vector<recob::PFParticle>> flashMatchPFPHandle;
-    std::vector<art::Ptr<recob::PFParticle>> flashMatchPFPVector;
+    art::Handle<std::vector<recob::PFParticle>> pfpHandle_flash;
+    std::vector<art::Ptr<recob::PFParticle>> pfpVector_flash;
 
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, flashMatchPFPHandle))
-        throw cet::exception("SigmaRecoAnalyser") << "No PFParticle Data Products Found!" << std::endl;
+    if (!evt.getByLabel(m_FlashMatchModuleLabel, pfpHandle_flash))
+        throw cet::exception("VisualiseSlice::FillMCSliceInfo") << "No PFParticle Data Products Found!" << std::endl;
 
-    art::fill_ptr_vector(flashMatchPFPVector, flashMatchPFPHandle);
+    art::fill_ptr_vector(pfpVector_flash, pfpHandle_flash);
 
     std::vector<art::Ptr<recob::PFParticle>> neutrinoPFPs;
-    lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(flashMatchPFPVector, neutrinoPFPs);
+    lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(pfpVector_flash, neutrinoPFPs);
 
     if (neutrinoPFPs.size() > 1)
     {
-        throw cet::exception("SigmaRecoAnalyser") << "Too many neutrinos found!" << std::endl;
+        throw cet::exception("VisualiseSlice::FillMCSliceInfo") << "Too many neutrinos found!" << std::endl;
     }
     else if (neutrinoPFPs.size() == 1)
     {
-        art::FindManyP<recob::Slice> flashMatchSliceAssoc = art::FindManyP<recob::Slice>(flashMatchPFPHandle, evt, m_FlashMatchModuleLabel);
-        const std::vector<art::Ptr<recob::Slice>> &flashMatchSlices = flashMatchSliceAssoc.at(neutrinoPFPs[0].key());
+        art::FindManyP<recob::Slice> sliceAssoc_flash = art::FindManyP<recob::Slice>(pfpHandle_flash, evt, m_FlashMatchModuleLabel);
+        const std::vector<art::Ptr<recob::Slice>> &slices_flash = sliceAssoc_flash.at(neutrinoPFPs[0].key());
 
-        if (!flashMatchSlices.empty())
+        if (!slices_flash.empty())
         {
-            const art::Ptr<recob::Slice> &flashMatchSlice = flashMatchSlices[0];
+            const art::Ptr<recob::Slice> &slice_flash = slices_flash[0];
 
-            m_flashMatchNuSliceID = flashMatchSlice->ID();
-            m_flashMatchNuSliceKey = flashMatchSlice.key();
-
-            // Fill completeness and purity
-            const std::vector<art::Ptr<recob::Hit>> &sliceHits(hitAssoc.at(flashMatchSlice.key()));
-
-            const int nSliceHits = sliceHits.size();
-            const int nSliceTrueHits = sliceSignalHitMap.find(flashMatchSlice->ID()) == sliceSignalHitMap.end() ? 0 : sliceSignalHitMap.at(flashMatchSlice->ID());
-
-            m_sliceCompleteness = totalTrueHits == 0 ? 0.0 : static_cast<float>(nSliceTrueHits) / static_cast<float>(totalTrueHits);
-            m_slicePurity = nSliceHits == 0 ? 0.0 : static_cast<float>(nSliceTrueHits) / static_cast<float>(nSliceHits);
+            m_flashMatchNuSliceID = slice_flash->ID();
         }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////
+    // Fill Slice IDs - these are the slices that we care about in our analyser
+    /////////////////////////////////////////////////////////////////////////////////
+    for (art::Ptr<recob::Slice> &slice : sliceVector_pandora)
+    {
+        const bool isTargetSlice = (sliceSignalHitMap.find(slice->ID()) != sliceSignalHitMap.end()) || 
+            ((m_flashMatchNuSliceID >= 0) && (slice->ID() == m_flashMatchNuSliceID)) || 
+            ((m_pandoraNuSliceID >= 0) && (slice->ID() == m_pandoraNuSliceID));
+
+        if (!isTargetSlice)
+            continue;
+
+        m_sliceIDs.push_back(slice->ID());
+    }
+
+    /////////////////////////////////////////////
+    // Get slice completeness/purity
+    /////////////////////////////////////////////
+    for (art::Ptr<recob::Slice> &slice : sliceVector_pandora)
+    {
+        if (std::find(m_sliceIDs.begin(), m_sliceIDs.end(), slice->ID()) == m_sliceIDs.end())
+            continue;
+
+        // Fill completeness and purity
+        const std::vector<art::Ptr<recob::Hit>> &sliceHits(hitAssoc_pandora.at(slice.key()));
+
+        const int nSliceHits = sliceHits.size();
+        const int nSliceTrueHits = sliceSignalHitMap.at(slice->ID());
+
+        m_sliceCompleteness_out.push_back(totalTrueHits == 0 ? 0.0 : static_cast<float>(nSliceTrueHits) / static_cast<float>(totalTrueHits));
+        m_slicePurity_out.push_back(nSliceHits == 0 ? 0.0 : static_cast<float>(nSliceTrueHits) / static_cast<float>(nSliceHits));
     }
 }
 
@@ -810,54 +767,75 @@ void pandora::VisualiseSlice::FillEventInformation(art::Event const& evt)
 
 void pandora::VisualiseSlice::FillEventVisualisationInfo(art::Event const& evt)
 {
-    // Get event hits
-    art::Handle<std::vector<recob::Hit>> hitHandle;
-    std::vector<art::Ptr<recob::Hit>> hitVector;
+    // Get slice information
+    art::Handle<std::vector<recob::Slice>> sliceHandle;
+    std::vector<art::Ptr<recob::Slice>> sliceVector;
 
-    if (!evt.getByLabel(m_HitModuleLabel, hitHandle))
-        throw cet::exception("VisualiseSlice") << "No Hit Data Products Found!" << std::endl;
+    if (!evt.getByLabel(m_PandoraModuleLabel, sliceHandle))
+        throw cet::exception("VisualiseSlice::FillEventVisualisationInfo") << "No Slice Data Products Found!" << std::endl;
 
-    art::fill_ptr_vector(hitVector, hitHandle);
+    art::FindManyP<recob::Hit> hitAssoc = art::FindManyP<recob::Hit>(sliceHandle, evt, m_PandoraModuleLabel);
+    art::fill_ptr_vector(sliceVector, sliceHandle);
 
-    // Get hit assoc to slice
-    art::FindManyP<recob::Slice> sliceAssn = art::FindManyP<recob::Slice>(hitHandle, evt, m_FlashMatchModuleLabel);
-
-    // Loop through event hits
-    for (const art::Ptr<recob::Hit> &hit : hitVector)
+    for (art::Ptr<recob::Slice> &slice : sliceVector)
     {
-        PandoraView pandoraView = GetPandora2DView(hit);
+        if (std::find(m_sliceIDs.begin(), m_sliceIDs.end(), slice->ID()) == m_sliceIDs.end())
+            continue;
 
-        std::vector<double> &allHits_wire = (pandoraView == TPC_VIEW_U) ? m_allUHits_wire : (pandoraView == TPC_VIEW_V) ? m_allVHits_wire : m_allWHits_wire;
-        std::vector<double> &allHits_drift = (pandoraView == TPC_VIEW_U) ? m_allUHits_drift : (pandoraView == TPC_VIEW_V) ? m_allVHits_drift : m_allWHits_drift;
-        std::vector<int> &allHits_owner = (pandoraView == TPC_VIEW_U) ? m_allUHits_owner : (pandoraView == TPC_VIEW_V) ? m_allVHits_owner : m_allWHits_owner;
-        std::vector<bool> &allHits_isInSlice = (pandoraView == TPC_VIEW_U) ? m_allUHits_isInSlice : (pandoraView == TPC_VIEW_V) ? m_allVHits_isInSlice : m_allWHits_isInSlice;
+        // Define vectors to fill for slice
+        std::vector<double> allUHits_wire_slice;
+        std::vector<double> allUHits_drift_slice;
+        std::vector<int> allUHits_owner_slice;
+        std::vector<double> allVHits_wire_slice;
+        std::vector<double> allVHits_drift_slice;
+        std::vector<int> allVHits_owner_slice;
+        std::vector<double> allWHits_wire_slice;
+        std::vector<double> allWHits_drift_slice;
+        std::vector<int> allWHits_owner_slice;
 
-        // Store who owns it
-        if (m_hitToTrackID.find(hit.key()) == m_hitToTrackID.end())
+        const std::vector<art::Ptr<recob::Hit>> &sliceHits(hitAssoc.at(slice.key()));
+
+        // Loop through event hits
+        for (const art::Ptr<recob::Hit> &hit : sliceHits)
         {
-            allHits_owner.push_back(DEFAULT_DOUBLE);
+            PandoraView pandoraView = GetPandora2DView(hit);
+
+            std::vector<double> &allHits_wire = (pandoraView == TPC_VIEW_U) ? allUHits_wire_slice : 
+                (pandoraView == TPC_VIEW_V) ? allVHits_wire_slice : allWHits_wire_slice;
+            std::vector<double> &allHits_drift = (pandoraView == TPC_VIEW_U) ? allUHits_drift_slice : 
+                (pandoraView == TPC_VIEW_V) ? allVHits_drift_slice : allWHits_drift_slice;
+            std::vector<int> &allHits_owner = (pandoraView == TPC_VIEW_U) ? allUHits_owner_slice : 
+                (pandoraView == TPC_VIEW_V) ? allVHits_owner_slice : allWHits_owner_slice;
+
+            // Store who owns it
+            if (m_hitToTrackID.find(hit.key()) == m_hitToTrackID.end())
+            {
+                allHits_owner.push_back(DEFAULT_DOUBLE);
+            }
+            else
+            {
+                const int ownerTrackID = m_hitToTrackID.at(hit.key());
+
+                allHits_owner.push_back((m_mcParticleMap.find(ownerTrackID) == m_mcParticleMap.end()) ? DEFAULT_DOUBLE : 
+                                        m_mcParticleMap.at(ownerTrackID)->PdgCode());
+            }
+
+            // Store position
+            TVector3 pandoraPosition = ObtainPandoraHitPosition(evt, hit, pandoraView);
+
+            allHits_wire.push_back(pandoraPosition.Z());
+            allHits_drift.push_back(pandoraPosition.X());
         }
-        else
-        {
-            const int ownerTrackID = m_hitToTrackID.at(hit.key());
 
-            allHits_owner.push_back((m_mcParticleMap.find(ownerTrackID) == m_mcParticleMap.end()) ? DEFAULT_DOUBLE : 
-                                    m_mcParticleMap.at(ownerTrackID)->PdgCode());
-        }
-
-        // Store position
-        TVector3 pandoraPosition = ObtainPandoraHitPosition(evt, hit, pandoraView);
-
-        allHits_wire.push_back(pandoraPosition.Z());
-        allHits_drift.push_back(pandoraPosition.X());
-
-        // Store is in slice
-        std::vector<art::Ptr<recob::Slice>> sliceOwner = sliceAssn.at(hit.key());
-
-        if (sliceOwner.empty())
-            allHits_isInSlice.push_back(false);
-        else
-            allHits_isInSlice.push_back(sliceOwner[0]->ID() == m_flashMatchNuSliceID);
+        m_allUHits_wire_out.push_back(allUHits_wire_slice);
+        m_allUHits_drift_out.push_back(allUHits_drift_slice);
+        m_allUHits_owner_out.push_back(allUHits_owner_slice);
+        m_allVHits_wire_out.push_back(allVHits_wire_slice);
+        m_allVHits_drift_out.push_back(allVHits_drift_slice);
+        m_allVHits_owner_out.push_back(allVHits_owner_slice);
+        m_allWHits_wire_out.push_back(allWHits_wire_slice);
+        m_allWHits_drift_out.push_back(allWHits_drift_slice);
+        m_allWHits_owner_out.push_back(allWHits_owner_slice);
     }
 }
 
@@ -899,58 +877,70 @@ void pandora::VisualiseSlice::FillEventNuVertexInfo(art::Event const& evt)
     ///////////////////////
     // Reco
     ///////////////////////
-    
     // Get slice information
     art::Handle<std::vector<recob::Slice>> sliceHandle;
     std::vector<art::Ptr<recob::Slice>> sliceVector;
 
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, sliceHandle))
-        throw cet::exception("PhotonBDTModuleLabel") << "No Slice Data Products Found!" << std::endl;
+    if (!evt.getByLabel(m_PandoraModuleLabel, sliceHandle))
+        throw cet::exception("VisualiseSlice::FillEventNuVertexInfo") << "No Slice Data Products Found!" << std::endl;
 
-    art::FindManyP<recob::PFParticle> pfpAssoc = art::FindManyP<recob::PFParticle>(sliceHandle, evt, m_FlashMatchModuleLabel);
+    art::FindManyP<recob::PFParticle> pfpAssoc = art::FindManyP<recob::PFParticle>(sliceHandle, evt, m_PandoraModuleLabel);
     art::fill_ptr_vector(sliceVector, sliceHandle);
 
     // Get PFP handle
     art::Handle<std::vector<recob::PFParticle>> pfpHandle;
 
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, pfpHandle))
+    if (!evt.getByLabel(m_PandoraModuleLabel, pfpHandle))
         throw cet::exception("VisualiseSlice") << "No PFParticle Data Products Found!" << std::endl;
+
+    art::FindManyP<recob::Vertex> vertexAssoc = art::FindManyP<recob::Vertex>(pfpHandle, evt, m_PandoraModuleLabel);
 
     for (art::Ptr<recob::Slice> &slice : sliceVector)
     {
-        if (slice->ID() == m_flashMatchNuSliceID)
+        if (std::find(m_sliceIDs.begin(), m_sliceIDs.end(), slice->ID()) == m_sliceIDs.end())
+            continue;
+
+        const std::vector<art::Ptr<recob::PFParticle>> &slicePFPs(pfpAssoc.at(slice.key()));
+
+        std::vector<art::Ptr<recob::PFParticle>> neutrinoPFPs;
+        lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(slicePFPs, neutrinoPFPs);
+
+        if ((neutrinoPFPs.size() != 1) || (vertexAssoc.at(neutrinoPFPs.at(0).key()).empty()))
         {
-            const std::vector<art::Ptr<recob::PFParticle>> &slicePFPs(pfpAssoc.at(slice.key()));
+            m_recoNuVertexX_out.push_back(DEFAULT_DOUBLE);
+            m_recoNuVertexY_out.push_back(DEFAULT_DOUBLE);
+            m_recoNuVertexZ_out.push_back(DEFAULT_DOUBLE);
+            m_uRecoNuVertex_wire_out.push_back(DEFAULT_DOUBLE);
+            m_vRecoNuVertex_wire_out.push_back(DEFAULT_DOUBLE);
+            m_wRecoNuVertex_wire_out.push_back(DEFAULT_DOUBLE);
+            m_topologicalScore_out.push_back(DEFAULT_DOUBLE);
 
-            std::vector<art::Ptr<recob::PFParticle>> neutrinoPFPs;
-            lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(slicePFPs, neutrinoPFPs);
-
-            if (neutrinoPFPs.size() != 1)
-                return;
-
-            art::FindManyP<recob::Vertex> vertexAssoc = art::FindManyP<recob::Vertex>(pfpHandle, evt, m_FlashMatchModuleLabel);
-
-            const std::vector<art::Ptr<recob::Vertex>> &nuVertex(vertexAssoc.at(neutrinoPFPs.at(0).key()));
-
-            if (nuVertex.empty())
-                return;
-
-            const TVector3 recoNuVertex = TVector3(nuVertex[0]->position().X(), nuVertex[0]->position().Y(), nuVertex[0]->position().Z());
-
-            m_recoNuVertexX = recoNuVertex.X();
-            m_recoNuVertexY = recoNuVertex.Y();
-            m_recoNuVertexZ = recoNuVertex.Z();       
-
-            const TVector3 uProjection = ProjectIntoPandoraView(recoNuVertex, TPC_VIEW_U);
-            const TVector3 vProjection = ProjectIntoPandoraView(recoNuVertex, TPC_VIEW_V);
-            const TVector3 wProjection = ProjectIntoPandoraView(recoNuVertex, TPC_VIEW_W);       
-
-            m_uRecoNuVertex_wire = uProjection.Z();
-            m_vRecoNuVertex_wire = vProjection.Z();
-            m_wRecoNuVertex_wire = wProjection.Z();       
-
-            break;
+            continue;
         }
+
+        const std::vector<art::Ptr<recob::Vertex>> &nuVertex(vertexAssoc.at(neutrinoPFPs.at(0).key()));
+        const TVector3 recoNuVertex = TVector3(nuVertex[0]->position().X(), nuVertex[0]->position().Y(), nuVertex[0]->position().Z());
+
+        m_recoNuVertexX_out.push_back(recoNuVertex.X());
+        m_recoNuVertexY_out.push_back(recoNuVertex.Y());
+        m_recoNuVertexZ_out.push_back(recoNuVertex.Z());
+
+        // Get topological score
+        art::FindManyP<larpandoraobj::PFParticleMetadata> metadataAssn = art::FindManyP<larpandoraobj::PFParticleMetadata>(pfpHandle, evt, m_FlashMatchModuleLabel);
+        std::vector<art::Ptr<larpandoraobj::PFParticleMetadata>> pfpMetadata = metadataAssn.at(neutrinoPFPs.at(0).key());
+
+        if (!pfpMetadata.empty() && (pfpMetadata[0]->GetPropertiesMap().find("NuScore") != pfpMetadata[0]->GetPropertiesMap().end()))
+            m_topologicalScore_out.push_back(pfpMetadata.at(0)->GetPropertiesMap().at("NuScore"));
+        else
+            m_topologicalScore_out.push_back(DEFAULT_DOUBLE);
+
+        const TVector3 uProjection = ProjectIntoPandoraView(recoNuVertex, TPC_VIEW_U);
+        const TVector3 vProjection = ProjectIntoPandoraView(recoNuVertex, TPC_VIEW_V);
+        const TVector3 wProjection = ProjectIntoPandoraView(recoNuVertex, TPC_VIEW_W);       
+
+        m_uRecoNuVertex_wire_out.push_back(uProjection.Z());
+        m_vRecoNuVertex_wire_out.push_back(vProjection.Z());
+        m_wRecoNuVertex_wire_out.push_back(wProjection.Z());
     }
 }
 
@@ -984,19 +974,53 @@ void pandora::VisualiseSlice::FillPFPInformation(art::Event const& evt)
     art::Handle<std::vector<recob::Slice>> sliceHandle;
     std::vector<art::Ptr<recob::Slice>> sliceVector;
 
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, sliceHandle))
-        throw cet::exception("PhotonBDTModuleLabel") << "No Slice Data Products Found!" << std::endl;
+    if (!evt.getByLabel(m_PandoraModuleLabel, sliceHandle))
+        throw cet::exception("VisualiseSlice::FillPFPInformation") << "No Slice Data Products Found!" << std::endl;
 
     art::fill_ptr_vector(sliceVector, sliceHandle);
 
-    art::FindManyP<recob::PFParticle> pfpAssoc = art::FindManyP<recob::PFParticle>(sliceHandle, evt, m_FlashMatchModuleLabel);
+    // And pfp associations
+    art::FindManyP<recob::PFParticle> pfpAssoc = art::FindManyP<recob::PFParticle>(sliceHandle, evt, m_PandoraModuleLabel);
 
-    for (const art::Ptr<recob::Slice> &slice : sliceVector)
+    for (art::Ptr<recob::Slice> &slice : sliceVector)
     {
-        if (slice->ID() != m_flashMatchNuSliceID)
+        if (std::find(m_sliceIDs.begin(), m_sliceIDs.end(), slice->ID()) == m_sliceIDs.end())
             continue;
 
         if (m_debug) std::cout << "Found Slice, Filling PFParticle Information..." << std::endl;
+
+        // Define slice vector to fill
+        std::vector<int> truePDG_slice;
+        std::vector<double> completeness_slice;
+        std::vector<double> purity_slice;
+        std::vector<double> recoVertexX_slice;
+        std::vector<double> recoVertexY_slice;
+        std::vector<double> recoVertexZ_slice;
+        std::vector<double> uRecoVertex_wire_slice;
+        std::vector<double> uRecoVertex_drift_slice;
+        std::vector<double> vRecoVertex_wire_slice;
+        std::vector<double> vRecoVertex_drift_slice;
+        std::vector<double> wRecoVertex_wire_slice;
+        std::vector<double> wRecoVertex_drift_slice;
+        std::vector<std::vector<double>> uHits_wire_slice;
+        std::vector<std::vector<double>> uHits_drift_slice;
+        std::vector<std::vector<double>> vHits_wire_slice;
+        std::vector<std::vector<double>> vHits_drift_slice;
+        std::vector<std::vector<double>> wHits_wire_slice;
+        std::vector<std::vector<double>> wHits_drift_slice;
+        std::vector<int> nSpacePoints_slice;
+        std::vector<std::vector<double>> spacePointsX_slice;
+        std::vector<std::vector<double>> spacePointsY_slice;
+        std::vector<std::vector<double>> spacePointsZ_slice;
+        std::vector<int> generation_slice;
+        std::vector<int> pandoraPFPCode_slice;
+        std::vector<double> trackShowerScore_slice;
+        std::vector<double> nuVertexSeparation_slice;
+        std::vector<int> nHits2D_slice;
+        std::vector<int> nHits3D_slice;
+        std::vector<int> nHitsU_slice;
+        std::vector<int> nHitsV_slice;
+        std::vector<int> nHitsW_slice;
 
         const std::vector<art::Ptr<recob::PFParticle>> &pfps(pfpAssoc.at(slice.key()));
 
@@ -1022,61 +1046,70 @@ void pandora::VisualiseSlice::FillPFPInformation(art::Event const& evt)
             FillPFPNuVertexInfo(evt, pfp);
             if (m_debug) std::cout << "Fill PFP Misc Information..." << std::endl;
             FillPFPMiscInfo(evt, pfp);
-            if (m_debug) std::cout << "Fill PFP Shower Information..." << std::endl;
-            FillPFPShowerInfo(evt, pfp);
-            if (m_debug) std::cout << "Fill PFP Energy Information..." << std::endl;
-            FillPFPEnergyInfo(evt, pfp);
-            if (m_debug) std::cout << "Fill PID Information..." << std::endl;
-            FillPIDInfo(evt, pfp);
-            if (m_debug) std::cout << "Fill Tree..." << std::endl;
 
             // IKR i hate this too
-            m_truePDG_out.push_back(m_truePDG);
-            m_completeness_out.push_back(m_completeness);
-            m_purity_out.push_back(m_purity);
-            m_recoVertexX_out.push_back(m_recoVertexX);
-            m_recoVertexY_out.push_back(m_recoVertexY);
-            m_recoVertexZ_out.push_back(m_recoVertexZ);
-            m_uRecoVertex_wire_out.push_back(m_uRecoVertex_wire);
-            m_uRecoVertex_drift_out.push_back(m_uRecoVertex_drift);
-            m_vRecoVertex_wire_out.push_back(m_vRecoVertex_wire);
-            m_vRecoVertex_drift_out.push_back(m_vRecoVertex_drift);
-            m_wRecoVertex_wire_out.push_back(m_wRecoVertex_wire);
-            m_wRecoVertex_drift_out.push_back(m_wRecoVertex_drift);
-            m_uHits_wire_out.push_back(m_uHits_wire);
-            m_uHits_drift_out.push_back(m_uHits_drift);
-            m_vHits_wire_out.push_back(m_vHits_wire);
-            m_vHits_drift_out.push_back(m_vHits_drift);
-            m_wHits_wire_out.push_back(m_wHits_wire);
-            m_wHits_drift_out.push_back(m_wHits_drift);
-            m_nSpacePoints_out.push_back(m_nSpacePoints);
-            m_spacePointsX_out.push_back(m_spacePointsX);
-            m_spacePointsY_out.push_back(m_spacePointsY);
-            m_spacePointsZ_out.push_back(m_spacePointsZ);
-            m_generation_out.push_back(m_generation);
-            m_pandoraPFPCode_out.push_back(m_pandoraPFPCode);
-            m_nHits3D_out.push_back(m_nHits3D);
-            m_nHits2D_out.push_back(m_nHits2D);
-            m_nHitsU_out.push_back(m_nHitsU);
-            m_nHitsV_out.push_back(m_nHitsV);
-            m_nHitsW_out.push_back(m_nHitsW);
-            m_nuVertexSeparation_out.push_back(m_nuVertexSeparation);
-            m_dca_out.push_back(m_dca);
-            m_nuVertexChargeDistribution_out.push_back(m_nuVertexChargeDistribution);
-            m_totalEnergy_out.push_back(m_totalEnergy);
-            m_initialdEdx_out.push_back(m_initialdEdx);
-            m_trackShowerScore_out.push_back(m_trackShowerScore);
-            m_showerOpeningAngle_out.push_back(m_showerOpeningAngle);
-            m_showerLength_out.push_back(m_showerLength);
-            m_trackParentSeparation_out.push_back(m_trackParentSeparation);
-            m_chiPIDProton_out.push_back(m_chiPIDProton);
-            m_chiPIDMuon_out.push_back(m_chiPIDMuon);
-            m_chiPIDPion_out.push_back(m_chiPIDPion);
-            m_braggPIDProton_out.push_back(m_braggPIDProton);
-            m_braggPIDMuon_out.push_back(m_braggPIDMuon);
-            m_braggPIDPion_out.push_back(m_braggPIDPion);
-            m_LLRPIDReduced_out.push_back(m_LLRPIDReduced);
+            truePDG_slice.push_back(m_truePDG);
+            completeness_slice.push_back(m_completeness);
+            purity_slice.push_back(m_purity);
+            recoVertexX_slice.push_back(m_recoVertexX);
+            recoVertexY_slice.push_back(m_recoVertexY);
+            recoVertexZ_slice.push_back(m_recoVertexZ);
+            uRecoVertex_wire_slice.push_back(m_uRecoVertex_wire);
+            uRecoVertex_drift_slice.push_back(m_uRecoVertex_drift);
+            vRecoVertex_wire_slice.push_back(m_vRecoVertex_wire);
+            vRecoVertex_drift_slice.push_back(m_vRecoVertex_drift);
+            wRecoVertex_wire_slice.push_back(m_wRecoVertex_wire);
+            wRecoVertex_drift_slice.push_back(m_wRecoVertex_drift);
+            uHits_wire_slice.push_back(m_uHits_wire);
+            uHits_drift_slice.push_back(m_uHits_drift);
+            vHits_wire_slice.push_back(m_vHits_wire);
+            vHits_drift_slice.push_back(m_vHits_drift);
+            wHits_wire_slice.push_back(m_wHits_wire);
+            wHits_drift_slice.push_back(m_wHits_drift);
+            nSpacePoints_slice.push_back(m_nSpacePoints);
+            spacePointsX_slice.push_back(m_spacePointsX);
+            spacePointsY_slice.push_back(m_spacePointsY);
+            spacePointsZ_slice.push_back(m_spacePointsZ);
+            generation_slice.push_back(m_generation);
+            pandoraPFPCode_slice.push_back(m_pandoraPFPCode);
+            nHits3D_slice.push_back(m_nHits3D);
+            nHits2D_slice.push_back(m_nHits2D);
+            nHitsU_slice.push_back(m_nHitsU);
+            nHitsV_slice.push_back(m_nHitsV);
+            nHitsW_slice.push_back(m_nHitsW);
+            nuVertexSeparation_slice.push_back(m_nuVertexSeparation);
         }
+
+        m_truePDG_out.push_back(truePDG_slice);
+        m_completeness_out.push_back(completeness_slice);
+        m_purity_out.push_back(purity_slice);
+        m_recoVertexX_out.push_back(recoVertexX_slice);
+        m_recoVertexY_out.push_back(recoVertexY_slice);
+        m_recoVertexZ_out.push_back(recoVertexZ_slice);
+        m_uRecoVertex_wire_out.push_back(uRecoVertex_wire_slice);
+        m_uRecoVertex_drift_out.push_back(uRecoVertex_drift_slice);
+        m_vRecoVertex_wire_out.push_back(vRecoVertex_wire_slice);
+        m_vRecoVertex_drift_out.push_back(vRecoVertex_drift_slice);
+        m_wRecoVertex_wire_out.push_back(wRecoVertex_wire_slice);
+        m_wRecoVertex_drift_out.push_back(wRecoVertex_drift_slice);
+        m_uHits_wire_out.push_back(uHits_wire_slice);
+        m_uHits_drift_out.push_back(uHits_drift_slice);
+        m_vHits_wire_out.push_back(vHits_wire_slice);
+        m_vHits_drift_out.push_back(vHits_drift_slice);
+        m_wHits_wire_out.push_back(wHits_wire_slice);
+        m_wHits_drift_out.push_back(wHits_drift_slice);
+        m_nSpacePoints_out.push_back(nSpacePoints_slice);
+        m_spacePointsX_out.push_back(spacePointsX_slice);
+        m_spacePointsY_out.push_back(spacePointsY_slice);
+        m_spacePointsZ_out.push_back(spacePointsZ_slice);
+        m_generation_out.push_back(generation_slice);
+        m_pandoraPFPCode_out.push_back(pandoraPFPCode_slice);
+        m_nHits3D_out.push_back(nHits3D_slice);
+        m_nHits2D_out.push_back(nHits2D_slice);
+        m_nHitsU_out.push_back(nHitsU_slice);
+        m_nHitsV_out.push_back(nHitsV_slice);
+        m_nHitsW_out.push_back(nHitsW_slice);
+        m_nuVertexSeparation_out.push_back(nuVertexSeparation_slice);
     }
 }
 
@@ -1136,16 +1169,16 @@ void pandora::VisualiseSlice::CollectHitsFromClusters(art::Event const& evt, con
 {
    art::Handle<std::vector<recob::PFParticle>> pfparticleHandle;
 
-   if (!evt.getByLabel(m_FlashMatchModuleLabel, pfparticleHandle))
+   if (!evt.getByLabel(m_PandoraModuleLabel, pfparticleHandle))
        throw cet::exception("VisualiseSlice") << "No PFParticle Data Products Found!" << std::endl;
 
    art::Handle<std::vector<recob::Cluster>> clusterHandle;
 
-   if (!evt.getByLabel(m_FlashMatchModuleLabel, clusterHandle)) 
+   if (!evt.getByLabel(m_PandoraModuleLabel, clusterHandle)) 
        throw cet::exception("VisualiseSlice") << "No Cluster Data Products Found!" << std::endl;
 
-   art::FindManyP<recob::Cluster> pfparticleClustersAssoc = art::FindManyP<recob::Cluster>(pfparticleHandle, evt, m_FlashMatchModuleLabel);
-   art::FindManyP<recob::Hit> clusterHitAssoc = art::FindManyP<recob::Hit>(clusterHandle, evt, m_FlashMatchModuleLabel);
+   art::FindManyP<recob::Cluster> pfparticleClustersAssoc = art::FindManyP<recob::Cluster>(pfparticleHandle, evt, m_PandoraModuleLabel);
+   art::FindManyP<recob::Hit> clusterHitAssoc = art::FindManyP<recob::Hit>(clusterHandle, evt, m_PandoraModuleLabel);
 
    std::vector<art::Ptr<recob::Cluster>> clusters = pfparticleClustersAssoc.at(pfparticle.key());
 
@@ -1164,10 +1197,10 @@ void pandora::VisualiseSlice::FillPFPVisualisationInfo(art::Event const& evt, co
     // PFP vertex
     art::Handle<std::vector<recob::PFParticle>> pfpHandle;
 
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, pfpHandle))
+    if (!evt.getByLabel(m_PandoraModuleLabel, pfpHandle))
         throw cet::exception("VisualiseSlice") << "No PFParticle Data Products Found!" << std::endl;
 
-    art::FindManyP<recob::Vertex> vertexAssoc = art::FindManyP<recob::Vertex>(pfpHandle, evt, m_FlashMatchModuleLabel);
+    art::FindManyP<recob::Vertex> vertexAssoc = art::FindManyP<recob::Vertex>(pfpHandle, evt, m_PandoraModuleLabel);
 
     const std::vector<art::Ptr<recob::Vertex>> &pfpVertex(vertexAssoc.at(pfp.key()));
 
@@ -1192,7 +1225,7 @@ void pandora::VisualiseSlice::FillPFPVisualisationInfo(art::Event const& evt, co
     }
 
     // Spacepoints
-    art::FindManyP<recob::SpacePoint> spacePointAssoc = art::FindManyP<recob::SpacePoint>(pfpHandle, evt, m_FlashMatchModuleLabel);
+    art::FindManyP<recob::SpacePoint> spacePointAssoc = art::FindManyP<recob::SpacePoint>(pfpHandle, evt, m_PandoraModuleLabel);
     const std::vector<art::Ptr<recob::SpacePoint>> &pfpSpacePoints = spacePointAssoc.at(pfp.key());
 
     m_nSpacePoints = pfpSpacePoints.size();
@@ -1314,10 +1347,10 @@ void pandora::VisualiseSlice::FillPFPHitInfo(art::Event const& evt, const art::P
 {
     art::Handle<std::vector<recob::PFParticle>> pfpHandle;
 
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, pfpHandle))
+    if (!evt.getByLabel(m_PandoraModuleLabel, pfpHandle))
         throw cet::exception("VisualiseSlice") << "No PFParticle Data Products Found!" << std::endl;
 
-    art::FindManyP<recob::SpacePoint> spacePointAssoc = art::FindManyP<recob::SpacePoint>(pfpHandle, evt, m_FlashMatchModuleLabel);
+    art::FindManyP<recob::SpacePoint> spacePointAssoc = art::FindManyP<recob::SpacePoint>(pfpHandle, evt, m_PandoraModuleLabel);
     const std::vector<art::Ptr<recob::SpacePoint>> &pfpSpacePoints = spacePointAssoc.at(pfp.key());
 
     m_nHits3D = pfpSpacePoints.size();
@@ -1357,88 +1390,26 @@ void pandora::VisualiseSlice::FillPFPNuVertexInfo(art::Event const& evt, const a
     ////////////////////////
     art::Handle<std::vector<recob::PFParticle>> pfpHandle;
 
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, pfpHandle))
+    if (!evt.getByLabel(m_PandoraModuleLabel, pfpHandle))
         throw cet::exception("VisualiseSlice") << "No PFParticle Data Products Found!" << std::endl;
 
-    art::FindManyP<recob::Vertex> vertexAssoc = art::FindManyP<recob::Vertex>(pfpHandle, evt, m_FlashMatchModuleLabel);
+    art::FindManyP<recob::Vertex> vertexAssoc = art::FindManyP<recob::Vertex>(pfpHandle, evt, m_PandoraModuleLabel);
+    art::FindManyP<recob::Slice> sliceAssoc = art::FindManyP<recob::Slice>(pfpHandle, evt, m_PandoraModuleLabel);
 
     const std::vector<art::Ptr<recob::Vertex>> &pfpVertex(vertexAssoc.at(pfp.key()));
+    const std::vector<art::Ptr<recob::Slice>> &pfpSlice(sliceAssoc.at(pfp.key()));
 
-    if (pfpVertex.empty())
-    {
-        std::cout << "pfp has no vertex!?" << std::endl;
+    if (pfpSlice.empty() || pfpVertex.empty())
         return;
-    }
 
-    const double dX(m_recoNuVertexX - pfpVertex.at(0)->position().X());
-    const double dY(m_recoNuVertexY - pfpVertex.at(0)->position().Y());
-    const double dZ(m_recoNuVertexZ - pfpVertex.at(0)->position().Z());
+    // find slice index
+    int sliceIndex = std::distance(m_sliceIDs.begin(), std::find(m_sliceIDs.begin(), m_sliceIDs.end(), pfpSlice.at(0)->ID()));
+
+    const double dX(m_recoNuVertexX_out.at(sliceIndex) - pfpVertex.at(0)->position().X());
+    const double dY(m_recoNuVertexY_out.at(sliceIndex) - pfpVertex.at(0)->position().Y());
+    const double dZ(m_recoNuVertexZ_out.at(sliceIndex) - pfpVertex.at(0)->position().Z());
 
     m_nuVertexSeparation = std::sqrt((dX * dX) + (dY * dY) + (dZ * dZ));
-
-    ////////////////////////
-    // NuVertex Charge Distribution (in 3D)
-    ////////////////////////
-    const geo::Vector_t geoNuVertex(m_recoNuVertexX, m_recoNuVertexY, m_recoNuVertexZ);
-    const geo::Vector_t geoPFPVertex(pfpVertex.at(0)->position().X(), pfpVertex.at(0)->position().Y(), pfpVertex.at(0)->position().Z());
-    const geo::Vector_t nuVertexAxis((geoPFPVertex - geoNuVertex).Unit());
-
-    // Need SpacePoints
-    art::FindManyP<recob::SpacePoint> spacePointAssoc = art::FindManyP<recob::SpacePoint>(pfpHandle, evt, m_FlashMatchModuleLabel);
-    const std::vector<art::Ptr<recob::SpacePoint>> &spacePoints(spacePointAssoc.at(pfp.key()));
-
-    if (!spacePoints.empty())
-    {
-        // Need charge info
-        art::Handle<std::vector<recob::SpacePoint>> spacePointHandle;
-
-        if (!evt.getByLabel(m_FlashMatchModuleLabel, spacePointHandle))
-            throw cet::exception("PhotonBDTNtuple") << "No SpacePoint Data Products Found!" << std::endl;
-
-        art::FindManyP<recob::Hit> hitAssoc = art::FindManyP<recob::Hit>(spacePointHandle, evt, m_FlashMatchModuleLabel);
-
-        // Nu vertex charge distribution
-        double totalCharge(0.f);
-        double nuVertexChargeDistribution = 0.f;
-
-        for (const art::Ptr<recob::SpacePoint> &spacePoint : spacePoints)
-        {
-            const std::vector<art::Ptr<recob::Hit>> &hit(hitAssoc.at(spacePoint.key()));
-
-            if (hit.empty())
-                continue;
-
-            const double hitCharge(std::fabs(hit.at(0)->Integral()));
-            totalCharge += hitCharge;
-
-            const geo::Vector_t geoSpacePoint(spacePoint->XYZ()[0], spacePoint->XYZ()[1], spacePoint->XYZ()[2]);
-            const geo::Vector_t displacement(geoSpacePoint - geoNuVertex);
-            const double thisT(std::sqrt(nuVertexAxis.Cross(displacement).Mag2()));
-
-            nuVertexChargeDistribution += (thisT * hitCharge);
-        }
-
-        if (totalCharge > std::numeric_limits<double>::epsilon())
-            nuVertexChargeDistribution /= totalCharge;
-
-        m_nuVertexChargeDistribution = nuVertexChargeDistribution;
-    }
-
-    ////////////////////////
-    // Distance of closest approach
-    ////////////////////////
-    art::FindManyP<recob::Shower> showerAssoc = art::FindManyP<recob::Shower>(pfpHandle, evt, m_ShowerModuleLabel);
-    const std::vector<art::Ptr<recob::Shower>> &showers = showerAssoc.at(pfp.key());
-
-    if (!showers.empty())
-    {
-        const art::Ptr<recob::Shower> &shower = showers.at(0);
-
-        const TVector3 nuVertexPosition(m_recoNuVertexX, m_recoNuVertexY, m_recoNuVertexZ);
-        const double alpha = std::fabs((shower->ShowerStart() - nuVertexPosition).Dot(shower->Direction()));
-        const TVector3 r = shower->ShowerStart() - (alpha * shower->Direction());
-        m_dca = (r - nuVertexPosition).Mag();
-    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -1456,253 +1427,15 @@ void pandora::VisualiseSlice::FillPFPMiscInfo(art::Event const& evt, const art::
     ////////////////////////
     art::Handle<std::vector<recob::PFParticle>> pfpHandle;
 
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, pfpHandle))
+    if (!evt.getByLabel(m_PandoraModuleLabel, pfpHandle))
         throw cet::exception("VisualiseSlice") << "No PFParticle Data Products Found!" << std::endl;
 
-    art::FindManyP<larpandoraobj::PFParticleMetadata> metadataAssn = art::FindManyP<larpandoraobj::PFParticleMetadata>(pfpHandle, evt, m_FlashMatchModuleLabel);
+    art::FindManyP<larpandoraobj::PFParticleMetadata> metadataAssn = art::FindManyP<larpandoraobj::PFParticleMetadata>(pfpHandle, evt, m_PandoraModuleLabel);
     std::vector<art::Ptr<larpandoraobj::PFParticleMetadata>> pfpMetadata = metadataAssn.at(pfp.key());
 
     if (!pfpMetadata.empty() && (pfpMetadata[0]->GetPropertiesMap().find("TrackScore") != pfpMetadata[0]->GetPropertiesMap().end()))
         m_trackShowerScore = pfpMetadata[0]->GetPropertiesMap().at("TrackScore");
 
-    ////////////////////////
-    // Parent Separation
-    ////////////////////////
-    if (m_generation > 2)
-    {
-        const int parentID(pfp->Parent());
-        art::FindManyP<recob::SpacePoint> spacePointAssoc = art::FindManyP<recob::SpacePoint>(pfpHandle, evt, m_FlashMatchModuleLabel);
-
-        if (m_pfpMap.find(parentID) != m_pfpMap.end())
-        {
-            const art::Ptr<recob::PFParticle> parentPFP(m_pfpMap.at(parentID));
-            const std::vector<art::Ptr<recob::SpacePoint>> &pfpSpacePoints(spacePointAssoc.at(pfp.key()));
-            const std::vector<art::Ptr<recob::SpacePoint>> &parentSpacePoints(spacePointAssoc.at(parentPFP.key()));
-
-            double closestDistanceSq(std::numeric_limits<double>::max());
-
-            for (const art::Ptr<recob::SpacePoint> &pfpSpacePoint : pfpSpacePoints)
-            {
-                for (const art::Ptr<recob::SpacePoint> &parentSpacePoint : parentSpacePoints)
-                {
-                    const double dX = pfpSpacePoint->XYZ()[0] - parentSpacePoint->XYZ()[0];
-                    const double dY = pfpSpacePoint->XYZ()[1] - parentSpacePoint->XYZ()[1];
-                    const double dZ = pfpSpacePoint->XYZ()[2] - parentSpacePoint->XYZ()[2];
-                    const double thisSep((dX * dX) + (dY * dY) + (dZ * dZ));
-
-                    if (thisSep < closestDistanceSq)
-                        closestDistanceSq = thisSep;
-                }
-            }
-
-            m_trackParentSeparation = std::sqrt(closestDistanceSq);
-        }
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////
-
-void pandora::VisualiseSlice::FillPFPShowerInfo(art::Event const& evt, const art::Ptr<recob::PFParticle> &pfp)
-{
-    art::Handle<std::vector<recob::PFParticle>> pfpHandle;
-
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, pfpHandle))
-        throw cet::exception("VisualiseSlice") << "No PFParticle Data Products Found!" << std::endl;
-
-    art::FindManyP<recob::Shower> showerAssoc = art::FindManyP<recob::Shower>(pfpHandle, evt, m_ShowerModuleLabel);
-    const std::vector<art::Ptr<recob::Shower>> &shower = showerAssoc.at(pfp.key());
-
-    if (shower.empty())
-        return;
-
-    m_showerOpeningAngle = shower.at(0)->OpenAngle() * 180.0 / 3.14;
-    m_showerLength = shower.at(0)->Length();
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////
-
-void pandora::VisualiseSlice::FillPFPEnergyInfo(art::Event const& evt, const art::Ptr<recob::PFParticle> &pfp)
-{
-    art::Handle<std::vector<recob::PFParticle>> pfpHandle;
-
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, pfpHandle))
-        throw cet::exception("VisualiseSlice") << "No PFParticle Data Products Found!" << std::endl;
-
-    art::FindManyP<recob::Track> trackAssoc = art::FindManyP<recob::Track>(pfpHandle, evt, m_TrackModuleLabel);
-
-    // Get the track
-    const std::vector<art::Ptr<recob::Track>> &track = trackAssoc.at(pfp.key());
-
-    if (track.empty())
-        return;
-
-    art::Handle<std::vector<recob::Track>> trackHandle;
-
-    if (!evt.getByLabel(m_TrackModuleLabel, trackHandle))
-        throw cet::exception("VisualiseSlice") << "No Track Data Products Found!" << std::endl;
-
-    art::FindManyP<anab::Calorimetry> caloAssoc = art::FindManyP<anab::Calorimetry>(trackHandle, evt, m_CalorimetryModuleLabel);
-
-    const std::vector<art::Ptr<anab::Calorimetry>> &trackCalo = caloAssoc.at(track.at(0).key());
-
-    if (trackCalo.empty())
-        return;
-
-    // Get the correct plane (collection) because it's not always the same                                                                                                        
-    bool foundCorrectPlane = false;
-    size_t index = 0;
-
-    for (size_t i = 0; i < trackCalo.size(); ++i)
-    {
-        if (trackCalo.at(i)->PlaneID().Plane == 2)
-        {
-            foundCorrectPlane = true;
-            index = i;
-            break;
-        }
-    }
-
-    if (!foundCorrectPlane)
-        return;
-
-    std::vector<float> calibrated_dEdX = trackCalo.at(index)->dEdx();
-    const std::vector<float> residualRange = trackCalo.at(index)->ResidualRange();
-    const std::vector<geo::Point_t> theXYZPositions = trackCalo.at(index)->XYZ();
-
-    float minRange = std::numeric_limits<float>::max();
-    float maxRange = -std::numeric_limits<float>::max();
-
-    for (size_t i = 0; i < calibrated_dEdX.size(); ++i)
-    {
-        // Sometimes I think the dEdx fails? sometimes, everybody cries...
-        // I think you can pick this out with a magnitude of zero
-        const geo::Point_t xyzPosition = theXYZPositions[i];
-        double magnitude = sqrt((xyzPosition.X() * xyzPosition.X()) + (xyzPosition.Y() * xyzPosition.Y()) + (xyzPosition.Z() * xyzPosition.Z()));
-
-         if (magnitude < std::numeric_limits<double>::epsilon())
-             continue;
-
-         if (residualRange[i] < minRange)
-             minRange = residualRange[i];
-
-         if (residualRange[i] > maxRange)
-             maxRange = residualRange[i];
-    }
-
-    // Median energy in first 4cm
-    std::vector<float> initialSegmentdEdx;
-
-    for (size_t i = 0; i < calibrated_dEdX.size(); ++i)
-    {
-        if (((maxRange - residualRange[i]) > 0) && ((maxRange - residualRange[i]) < 4.0))
-            initialSegmentdEdx.push_back(calibrated_dEdX[i]);
-    }
-
-    m_initialdEdx = GetMedianValue(initialSegmentdEdx);
-
-
-    // SUM THE ENERGY OF THE HITS!!!!! - I have no idea how uboone do this..
-    m_totalEnergy = trackCalo.at(index)->KineticEnergy();
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-double pandora::VisualiseSlice::GetMedianValue(const std::vector<float> &inputVector)
-{
-    if (inputVector.empty())
-        return -999.0;
-
-    // if odd
-    if (inputVector.size() % 2 != 0)
-    {
-        const int index = std::floor(static_cast<double>(inputVector.size()) / 2.0);
-        return inputVector.at(index);
-    }
-
-    // if even
-    const int firstIndex = inputVector.size() / static_cast<int>(2);
-    const int secondIndex = firstIndex - 1;
-
-    return (inputVector.at(firstIndex) + inputVector.at(secondIndex)) / 2.0;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////
-
-void pandora::VisualiseSlice::FillPIDInfo(art::Event const& evt, const art::Ptr<recob::PFParticle> &pfp)
-{
-    art::Handle<std::vector<recob::PFParticle>> pfpHandle;
-
-    if (!evt.getByLabel(m_FlashMatchModuleLabel, pfpHandle))
-        throw cet::exception("VisualiseSlice") << "No PFParticle Data Products Found!" << std::endl;
-
-    art::FindManyP<recob::Track> trackAssoc = art::FindManyP<recob::Track>(pfpHandle, evt, m_TrackModuleLabel);
-
-    // Get the track
-    const std::vector<art::Ptr<recob::Track>> &track = trackAssoc.at(pfp.key());
-
-    if (track.empty())
-        return;
-
-    // Now get the PID
-    art::Handle<std::vector<recob::Track>> trackHandle;
-
-    if (!evt.getByLabel(m_TrackModuleLabel, trackHandle))
-        throw cet::exception("VisualiseSlice") << "No Track Data Products Found!" << std::endl;
-
-    art::FindManyP<anab::ParticleID> pidAssoc = art::FindManyP<anab::ParticleID>(trackHandle, evt, m_PIDModuleLabel);
-
-    const std::vector<art::Ptr<anab::ParticleID>> &pids = pidAssoc.at(track.at(0).key());
-
-    if (pids.empty())
-        return;
-
-    const art::Ptr<anab::ParticleID> &pid = pids.at(0);
-
-    // Look at the chi2 PID for induction plane
-    m_chiPIDProton = searchingfornues::PID(pid, "Chi2", anab::kGOF, anab::kForward, 2212, 2);
-    m_chiPIDMuon = searchingfornues::PID(pid, "Chi2", anab::kGOF, anab::kForward, 13, 2);
-    m_chiPIDPion = searchingfornues::PID(pid, "Chi2", anab::kGOF, anab::kForward, 211, 2);
-
-    // Look at Bragg peak for induction plane
-    m_braggPIDProton = std::max(searchingfornues::PID(pid, "BraggPeakLLH", anab::kLikelihood, anab::kForward, 2212, 2),
-                                searchingfornues::PID(pid, "BraggPeakLLH", anab::kLikelihood, anab::kBackward, 2212, 2));
-    m_braggPIDMuon = std::max(searchingfornues::PID(pid, "BraggPeakLLH", anab::kLikelihood, anab::kForward, 13, 2),
-                              searchingfornues::PID(pid, "BraggPeakLLH", anab::kLikelihood, anab::kBackward, 13, 2));
-    m_braggPIDPion = std::max(searchingfornues::PID(pid, "BraggPeakLLH", anab::kLikelihood, anab::kForward, 211, 2),
-                              searchingfornues::PID(pid, "BraggPeakLLH", anab::kLikelihood, anab::kBackward, 211, 2));
-
-    // PID LLR calculator
-    art::FindManyP<anab::Calorimetry> caloAssoc = art::FindManyP<anab::Calorimetry>(trackHandle, evt, m_CalorimetryModuleLabel);
-    const std::vector<art::Ptr<anab::Calorimetry>> &trackCalo = caloAssoc.at(track.at(0).key());
-
-    if (trackCalo.empty())
-        return;
-
-    float LLRPID = 0;
-
-    for (const art::Ptr<anab::Calorimetry> &calo : trackCalo)
-    {
-        if (calo->ResidualRange().size() == 0) continue;
-
-        auto const &plane = calo->PlaneID().Plane;
-        auto const &dEdxValues = calo->dEdx();
-        auto const &resRange = calo->ResidualRange();
-        auto const &pitch = calo->TrkPitchVec();
-        std::vector<std::vector<float>> paramValues;
-        paramValues.push_back(resRange);
-        paramValues.push_back(pitch);
-
-        float caloEnergy = 0;
-
-        for (unsigned int i = 0; i < dEdxValues.size(); i++)
-            caloEnergy += dEdxValues[i] * pitch[i];
-
-        const float thisLLRPID = m_LLRPIDCalculator.LLR_many_hits_one_plane(dEdxValues, paramValues, plane);
-
-        LLRPID += thisLLRPID;
-    }
-
-    m_LLRPIDReduced = atan(LLRPID / 100.f) * 2.f / 3.14159266;  
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////

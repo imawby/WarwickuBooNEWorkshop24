@@ -16,7 +16,7 @@ physics:
       HitModuleLabel:             "gaushit"
       BacktrackModuleLabel:       "gaushitTruthMatch"
       FlashMatchModuleLabel:      "pandora"
-
+      PandoraModuleLabel:         "pandoraPatRec:allOutcomes"
       TrackModuleLabel:           "pandora"
       ShowerModuleLabel:          "pandora"
       CalorimetryModuleLabel:     "pandoracali"
