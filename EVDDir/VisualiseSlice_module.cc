@@ -31,10 +31,6 @@
 // Services
 #include "art/Framework/Services/Optional/TFileService.h"
 
-// Hyperon
-#include "ubana/HyperonProduction/Modules/SubModules/SubModuleG4Truth.h"
-#include "ubana/HyperonProduction/Modules/SubModules/SubModuleGeneratorTruth.h"
-
 // larpandora
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 #include "larpandora/LArPandoraInterface/LArPandoraGeometry.h"
